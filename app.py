@@ -10,9 +10,9 @@ app = Flask(__name__)
 app.register_blueprint(recipe_bp)
 app.register_blueprint(creator_bp)
 
-if __name__ == '__main__':
-    app.run(debug=True)
 """if __name__ == '__main__':
+    app.run(debug=True)"""
+if __name__ == '__main__':
     # When running the app locally (not using Gunicorn), use this block
     # Gunicorn will directly run 'app' without calling this block
-    app.run(host='0.0.0.0', port=8000, debug=False)"""
+    app.run(host='0.0.0.0', port=8000, debug=False)
