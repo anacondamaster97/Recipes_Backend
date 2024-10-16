@@ -45,6 +45,8 @@ def post_recipe(data):
     if not recipe_model.Creator.get(user=user):
         return jsonify({"error": "User does not exist"}), 400
     recipe = recipe_model.Recipe(user=recipe_model.Creator.get(user=user),name=name,ingredients=ingredients,country=country)
+    creator = recipe_model.Creator.get(user=user)
+    creator.recipes.add(recipe)
     commit()
     return jsonify({"message": f"Recipe for {name} created by {user}"}), 200
 
@@ -100,5 +102,5 @@ def delete_recipe(data):
 def get_all_recipes():
 
     data = select(recipe for recipe in recipe_model.Recipe)[:]
-    data = [(recipe.name, recipe.user, recipe.ingredients, recipe.country) for recipe in data]
-    return {"data":data}
+    data = [(recipe.name, recipe.user.user, recipe.ingredients, recipe.country) for recipe in data]
+    return jsonify({"data":data}), 200

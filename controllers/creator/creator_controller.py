@@ -89,6 +89,16 @@ def delete_creator(data):
     return jsonify({"message": f"{user} deleted"}), 200
 
 @db_session
+def get_all_creator_recipes(json_data):
+    if 'user' not in json_data: return jsonify({"error": "user required"}), 400
+    user = json_data['user']
+    data = select(creator for creator in recipe_model.Creator if creator.user == user)[:]
+    data = [(recipe) for recipe in data[0].recipes]
+
+    data = [{"user":user,"name":recipe.name, "ingredients":recipe.ingredients, "country":recipe.country} for recipe in data]
+    return {"data":data}
+
+@db_session
 def get_all_creators():
 
     data = select(creator for creator in recipe_model.Creator)[:]

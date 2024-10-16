@@ -7,6 +7,7 @@ class Creator(db.Entity):
     recipes = Set('Recipe')
     followers = Set('Creator', reverse='following')
     following = Set('Creator', reverse='followers')
+    
 
 class Recipe(db.Entity):
     user = Required(Creator)
