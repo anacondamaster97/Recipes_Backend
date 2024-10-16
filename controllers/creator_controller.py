@@ -27,17 +27,15 @@ def get_creator(data):
 @db_session
 def post_creator(data):
 
-    required = ["user","name","ingredients","country"]
+    required = ["user"]
     inside = []
     for elems in required:
         if elems not in data:
             inside.append(elems)
     if inside: return jsonify({"error": ''.join(inside) + " required"}), 400
 
-    name = data.get('name')
     user = data.get('user')
-    ingredients = data.get('ingredients')
-    country = data.get('country')
+
 
     creators = select(creator for creator in recipe_model.Creator if creator.user == user)[:]
     if creators:
@@ -45,22 +43,20 @@ def post_creator(data):
     
     creator = recipe_model.Creator(user=user)
     commit()
-    return jsonify({"message": f"Recipe for {name} created by {user}"}), 200
+    return jsonify({"message": f"{user} created"}), 200
 
 @db_session
 def update_creator(data):
 
-    required = ["user","name","ingredients","country"]
+    required = ["user"]
     inside = []
     for elems in required:
         if elems not in data:
             inside.append(elems)
     if inside: return jsonify({"error": ''.join(inside) + " required"}), 400
 
-    name = data.get('name')
     user = data.get('user')
-    ingredients = data.get('ingredients')
-    country = data.get('country')
+
 
     creators = select(creator for creator in recipe_model.Creator if creator.user == user)[:]
     print(creators)
@@ -68,21 +64,19 @@ def update_creator(data):
         return jsonify({"error": "User does not exists"}), 400
               
     creator = recipe_model.Creator.get(user=user)
-    creator.ingredients, creator.country = ingredients, country
     commit()
     return jsonify({"message": f"{user} updated"}), 200
 
 @db_session
 def delete_creator(data):
 
-    required = ["user","name"]
+    required = ["user"]
     inside = []
     for elems in required:
         if elems not in data:
             inside.append(elems)
     if inside: return jsonify({"error": ''.join(inside) + " required"}), 400
 
-    name = data.get('name')
     user = data.get('user')
 
     creators = select(creator for creator in recipe_model.Creator if creator.user == user)[:]
