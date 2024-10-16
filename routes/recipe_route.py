@@ -7,7 +7,6 @@ recipe_bp = Blueprint('recipe', __name__)
 # GET handler for /weather
 @recipe_bp.route('/recipe', methods=['GET'])
 def get_recipe():
-    print(recipe_controller.get_all_recipes())
     return recipe_controller.get_recipe(request.get_json())
 
 # POST handler for /weather
@@ -18,12 +17,10 @@ def add_recipe():
 # PUT handler for /weather
 @recipe_bp.route('/recipe', methods=['PUT'])
 def update_recipe():
-    data = request.get_json()
-    return recipe_controller.update_recipe(data)
+    return recipe_controller.update_recipe(request.get_json())
 
 # DELETE handler for /weather
 @recipe_bp.route('/recipe', methods=['DELETE'])
 def delete_recipe():
-    data = request.get_json()
-    return recipe_controller.delete_recipe(data)
+    return recipe_controller.delete_recipe(request.get_json())
 

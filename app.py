@@ -2,11 +2,17 @@ from flask import Flask
 
 # Blueprints
 from routes.recipe_route import recipe_bp
+from routes.creator_route import creator_bp
 
 app = Flask(__name__)
 
 # Register blueprints
 app.register_blueprint(recipe_bp)
+app.register_blueprint(creator_bp)
 
+"""if __name__ == '__main__':
+    app.run(debug=True)"""
 if __name__ == '__main__':
-    app.run(debug=True)
+    # When running the app locally (not using Gunicorn), use this block
+    # Gunicorn will directly run 'app' without calling this block
+    app.run(host='0.0.0.0', port=8000, debug=False)

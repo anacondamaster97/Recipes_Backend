@@ -13,11 +13,11 @@ def get_recipe(data):
     if 'user' not in data or 'name' not in data: return jsonify({"error": "User or Name not recieved"}), 404
 
     user, name = data['user'], data['name']
-    recipes = select(recipe for recipe in recipe_model.Recipe if recipe.name == name and recipe.user == user)[:]
+    recipes = select(recipe for recipe in recipe_model.Recipe if recipe.name == name and recipe.user.user == user)[:]
 
     if not recipes: return jsonify({"error": "Recipe not found"}), 404
     
-    return jsonify({"user":recipes[0].user,"name":recipes[0].name, "ingredients":recipes[0].ingredients, "country":recipes[0].country}), 200 
+    return jsonify({"user":recipes[0].user.user,"name":recipes[0].name, "ingredients":recipes[0].ingredients, "country":recipes[0].country}), 200 
     
 """
 {
@@ -39,11 +39,12 @@ def post_recipe(data):
     ingredients = data.get('ingredients')
     country = data.get('country')
 
-    recipes = select(recipe for recipe in recipe_model.Recipe if recipe.name == name and recipe.user == user)[:]
+    recipes = select(recipe for recipe in recipe_model.Recipe if recipe.name == name and recipe.user.user == user)[:]
     if recipes:
         return jsonify({"error": "Recipe and User already exists"}), 400
-
-    recipe = recipe_model.Recipe(user=user,name=name,ingredients=ingredients,country=country)
+    if not recipe_model.Creator.get(user=user):
+        return jsonify({"error": "User does not exist"}), 400
+    recipe = recipe_model.Recipe(user=recipe_model.Creator.get(user=user),name=name,ingredients=ingredients,country=country)
     commit()
     return jsonify({"message": f"Recipe for {name} created by {user}"}), 200
 
@@ -62,11 +63,13 @@ def update_recipe(data):
     ingredients = data.get('ingredients')
     country = data.get('country')
 
-    recipes = select(recipe for recipe in recipe_model.Recipe if recipe.name == name and recipe.user == user)[:]
+    recipes = select(recipe for recipe in recipe_model.Recipe if recipe.name == name and recipe.user.user == user)[:]
+    print(recipes)
     if not recipes:
         return jsonify({"error": "Recipe and User does not exists"}), 400
-
-    recipe = recipe_model.Recipe.get(user=user,name=name)
+    if not recipe_model.Creator.get(user=user):
+        return jsonify({"error": "User does not exist"}), 400
+    recipe = recipe_model.Recipe.get(user=recipe_model.Creator.get(user=user),name=name)
     recipe.ingredients, recipe.country = ingredients, country
     commit()
     return jsonify({"message": f"Recipe for {name} created by {user} updated"}), 200
@@ -84,11 +87,11 @@ def delete_recipe(data):
     name = data.get('name')
     user = data.get('user')
 
-    recipes = select(recipe for recipe in recipe_model.Recipe if recipe.name == name and recipe.user == user)[:]
+    recipes = select(recipe for recipe in recipe_model.Recipe if recipe.name == name and recipe.user.user == user)[:]
     if not recipes:
         return jsonify({"error": "Recipe and User does not exist in database"}), 400
 
-    recipe = recipe_model.Recipe.get(user=user,name=name)
+    recipe = recipe_model.Recipe.get(user=recipe_model.Creator.get(user=user),name=name)
     recipe.delete()
     commit()
     return jsonify({"message": f"Recipe for {name} created by {user} deleted"}), 200
