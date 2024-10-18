@@ -14,7 +14,11 @@ def get_all_recipes():
 
 @recipe_bp.route('/recipe', methods=['POST'])
 def add_recipe():
-    return recipe_controller.post_recipe(request.get_json())
+    return recipe_controller.post_recipe(request.get_json(), request)
+
+@recipe_bp.route('/recipe/image', methods=['POST'])
+def upload_recipe_image():
+    return recipe_controller.upload_recipe_image(request)
 
 @recipe_bp.route('/recipe', methods=['PUT'])
 def update_recipe():
